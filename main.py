@@ -47,7 +47,8 @@ def count_islands(matrix: NDArray[np.int_]) -> tuple[int, NDArray[np.int_]]:
         matrix: 2D array where 1 represents land and 0 represents water
 
     Returns:
-        Number of islands found
+        tuple: (island_count, labeled_matrix) where labeled_matrix shows 
+               each island marked with negative numbers (-1, -2, -3, ...)
 
     Raises:
         ValueError: If matrix is not 2D or contains invalid values
