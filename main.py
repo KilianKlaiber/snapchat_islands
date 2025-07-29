@@ -9,6 +9,16 @@ from numpy.typing import NDArray
 
 
 def mark_island(map: NDArray[np.int_], point: tuple[int, int], number: int) -> None:
+    """Mark all patches of land constituting an island
+
+    Args:
+        map (NDArray[np.int_]): The array representing land = 1 and water = 0
+        point (tuple[int, int]): point of departure for exploring an island.
+        number (int): positive integer representing the first, second or third Island that has been detected.
+
+    Raises:
+        ValueError: tuple does not represent point inside the map.
+    """
     height, width = map.shape
 
     # check whether the tuple is inside the map
@@ -17,13 +27,19 @@ def mark_island(map: NDArray[np.int_], point: tuple[int, int], number: int) -> N
         raise ValueError(f"point {point} not inside map {map}.")
     if point[1] < 0 or point[1] >= width:
         raise ValueError(f"point {point} not inside map {map}.")
+    if number < 1:
+        raise ValueError(f"number {number} must be a positive integer.")
 
+    # If the point represents water then do not look for connected islands.
     if map[point[0], point[1]] <= 0:
         return
 
+    # Mark patches of land with a negative number, in order to indicate that the Island
+    # has been visited before and the patch does not represent a new Island.
     if map[point[0], point[1]] == 1:
         map[point[0], point[1]] = -number
 
+    # Search for patches of land in the neighborhood of the marked patch.
     # Check point one row up
     if point[0] - 1 >= 0 and map[point[0] - 1, point[1]] == 1:
         new_point = (point[0] - 1, point[1])
