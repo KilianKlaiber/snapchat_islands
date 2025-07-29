@@ -5,7 +5,7 @@ Any land connected horizontally or vertically belongs to the same Island.
 
 https://www.youtube.com/shorts/M657SIxKJj8
 
-The main idea of my solution is to mark any Island that you have visited with a sign. If you visit it again, the sign will tell you that you have been here before. Therefore, you will not count the island twice. As soon as you find a patch of lang without a sign, you can raise the count for the number of islands.
+The main idea of my solution is to mark any Island that you have visited with a sign. If you visit it again, the sign will tell you that you have been here before. Therefore, you will not count the island twice. As soon as you find a patch of land without a sign, you can raise the count for the number of islands. I chose as a sign a negative numbers, such that it is not confused with an unknown Island or water. The first encountered island gets -1, the second -2 ,...
 
 A separate recursive function detects all patches of land connected to a patch that you have discovered and thus constitute an Island. 
 
