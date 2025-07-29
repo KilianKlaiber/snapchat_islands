@@ -17,55 +17,64 @@ def mark_island(map: NDArray[np.int_], point: tuple[int, int], number: int) -> N
         number (int): positive integer representing the first, second or third Island that has been detected.
 
     Raises:
-        ValueError: tuple does not represent point inside the map.
+        ValueError: number is not positive
     """
+    row, col = point
     height, width = map.shape
 
-    # check whether the tuple is inside the map
-
-    if point[0] < 0 or point[0] >= height:
-        raise ValueError(f"point {point} not inside map {map}.")
-    if point[1] < 0 or point[1] >= width:
-        raise ValueError(f"point {point} not inside map {map}.")
+    # Validate number parameter
     if number < 1:
         raise ValueError(f"number {number} must be a positive integer.")
 
-    # If the point represents water then do not look for connected islands.
-    if map[point[0], point[1]] <= 0:
+    # Base case: out of bounds, water, or already visited
+    if row < 0 or row >= height or col < 0 or col >= width or map[row, col] <= 0:
         return
 
-    # Mark patches of land with a negative number, in order to indicate that the Island
-    # has been visited before and the patch does not represent a new Island.
-    if map[point[0], point[1]] == 1:
-        map[point[0], point[1]] = -number
+    # Mark this land cell as visited
+    map[row, col] = -number
 
-    # Search for patches of land in the neighborhood of the marked patch.
-    # Check point one row up
-    if point[0] - 1 >= 0 and map[point[0] - 1, point[1]] == 1:
-        new_point = (point[0] - 1, point[1])
-        mark_island(map, new_point, number)
+    # Recursively explore all 4 directions
+    mark_island(map, (row - 1, col), number)  # up
+    mark_island(map, (row + 1, col), number)  # down
+    mark_island(map, (row, col - 1), number)  # left
+    mark_island(map, (row, col + 1), number)  # right
 
-    # Check point one row down
 
-    if point[0] + 1 < height and map[point[0] + 1, point[1]] == 1:
-        new_point = (point[0] + 1, point[1])
-        mark_island(map, new_point, number)
+def count_islands(map: NDArray[np.int_]) -> int:
+    """Count the number of islands in a 2D grid.
 
-    # Check point to the left
-    if point[1] - 1 >= 0 and map[point[0], point[1] - 1] == 1:
-        new_point = (point[0], point[1] - 1)
-        mark_island(map, new_point, number)
+    Args:
+        map: 2D array where 1 represents land and 0 represents water
 
-    # Check point to the right
-    if point[1] + 1 < width and map[point[0], point[1] + 1] == 1:
-        new_point = (point[0], point[1] + 1)
-        mark_island(map, new_point, number)
+    Returns:
+        Number of islands found
+
+    Raises:
+        ValueError: If map is not 2D or contains invalid values
+    """
+    if map.ndim != 2:
+        raise ValueError("Map must be a 2D array")
+
+    if not np.all((map == 0) | (map == 1)):
+        raise ValueError("Map must contain only 0s (water) and 1s (land)")
+
+    # Make a copy to avoid modifying the original
+    working_map = map.copy()
+
+    island_count = 0
+    for (row, col), value in np.ndenumerate(working_map):
+        if value == 1:  # Found unmarked land
+            island_count += 1
+            mark_island(working_map, (row, col), island_count)
+
+    return island_count
 
 
 def main():
+    """Demonstrate island counting with a sample grid."""
     print("Hello from snapchat-islands!")
 
-    map = np.array(
+    sample_map = np.array(
         [
             [1, 1, 0, 0, 0],
             [1, 1, 0, 0, 1],
@@ -75,17 +84,13 @@ def main():
         ]
     )
 
-    # Loop through all positions to find islands
-    island_count = 0
-    for (row, col), value in np.ndenumerate(map):
-        if value == 1:  # Found unmarked land
-            island_count += 1
-            mark_island(map, (row, col), island_count)
+    print("Original map:")
+    print(sample_map)
 
-    print(f"Found {island_count} islands")
-    print("Marked map:")
-    print(map)
-    
+    island_count = count_islands(sample_map)
+
+    print(f"\nFound {island_count} islands")
+
     return island_count
 
 
