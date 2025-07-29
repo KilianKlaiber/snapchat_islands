@@ -59,8 +59,6 @@ def main():
         ]
     )
 
-    print(map)
-
     # Loop through all positions to find islands
     island_count = 0
     for (row, col), value in np.ndenumerate(map):
@@ -71,6 +69,8 @@ def main():
     print(f"Found {island_count} islands")
     print("Marked map:")
     print(map)
+    
+    return island_count
 
 
 if __name__ == "__main__":
